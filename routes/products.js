@@ -192,4 +192,16 @@ router.put('/gallery-images/:id', uploadOptions.array('images', 10), async (req,
     res.send(product);
 });
 
+// Searching product by Name
+router.get(`/search/:key`, async (req, res) => {
+    const productList = await Product.find({
+        $or: [{ name: { $regex: req.params.key, $options: '$i' } }]
+    }).populate('category');
+
+    if (!productList) {
+        res.status(500).json({ success: false });
+    }
+    res.send(productList);
+});
+
 module.exports = router;
